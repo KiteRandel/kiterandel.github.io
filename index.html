@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="KiteRandel" />
+  <meta name="description" content="KiteRandel's projects: 3D characters, games and web experiments." />
+  <title>KiteRandel</title>
+  <script>document.documentElement.classList.add('js')</script>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🪁</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0d0818; --bg2: #160f27; --card: #1b1430; --line: #2c2347;
+      --text: #f1edf9; --muted: #a59cbd;
+      --pink: #ff4fa3; --cyan: #3ff2ff; --yellow: #ffe14f; --violet: #9b5cff;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.6 Inter, system-ui, sans-serif; overflow-x: hidden; }
+    a { color: inherit; }
+    h1, h2, h3 { font-family: Fredoka, system-ui, sans-serif; line-height: 1.1; margin: 0; }
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+
+    /* ---------- hero ---------- */
+    .hero { position: relative; min-height: min(78vh, 760px); padding: 40px 0; display: grid; align-items: center;
+      background: radial-gradient(1000px 600px at 75% 40%, #2b1250 0%, transparent 60%), radial-gradient(700px 500px at 10% 90%, #102a3d 0%, transparent 60%); }
+    .hero .wrap { display: grid; grid-template-columns: 1.1fr 1fr; gap: 20px; align-items: center; width: 100%; }
+    .eyebrow { display: inline-flex; gap: 8px; align-items: center; font-size: 14px; color: var(--muted);
+      border: 1px solid var(--line); padding: 5px 12px; border-radius: 999px; background: rgba(255,255,255,.03); }
+    .eyebrow .dot { width: 8px; height: 8px; border-radius: 50%; background: #4fff9b; box-shadow: 0 0 10px #4fff9b; }
+    .hero h1 { font-size: clamp(48px, 9vw, 96px); margin: 18px 0 10px; letter-spacing: -.01em;
+      background: linear-gradient(90deg, var(--pink), var(--yellow) 50%, var(--cyan)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .hero p.lead { font-size: clamp(18px, 2.3vw, 22px); color: #d6cfe6; max-width: 30ch; margin: 0 0 26px; }
+    .cta { display: flex; gap: 10px; flex-wrap: wrap; }
+    .btn { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; font-weight: 600; padding: 12px 20px; border-radius: 999px;
+      border: 2px solid var(--line); transition: transform .15s, border-color .2s, background .2s; }
+    .btn:hover { transform: translateY(-2px); border-color: var(--cyan); }
+    .btn.primary { background: var(--pink); border-color: var(--pink); color: #fff; }
+    .btn.primary:hover { background: #ff69b1; border-color: #ff69b1; }
+    .stage { position: relative; aspect-ratio: 1 / 1.05; width: 100%; max-width: 480px; justify-self: center; }
+    #kite { width: 100%; height: 100%; display: block; cursor: grab; }
+    #kite:active { cursor: grabbing; }
+    .stage .hint { position: absolute; bottom: 4px; width: 100%; text-align: center; font-size: 13px; color: var(--muted); pointer-events: none; }
+    .stage .fallback { position: absolute; inset: 0; display: none; place-items: center; font-size: 140px; }
+    .stage.failed .fallback { display: grid; } .stage.failed canvas, .stage.failed .hint { display: none; }
+    .glow { position: absolute; inset: 15% 15% 5%; border-radius: 50%; background: radial-gradient(circle, rgba(255,79,163,.35), transparent 65%); filter: blur(20px); z-index: -1; }
+
+    /* ---------- sections ---------- */
+    section { padding: 70px 0; }
+    .section-head { display: flex; justify-content: space-between; align-items: end; gap: 12px; margin-bottom: 26px; flex-wrap: wrap; }
+    .section-head h2 { font-size: clamp(30px, 4vw, 42px); }
+    .section-head p { color: var(--muted); margin: 6px 0 0; }
+
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 20px; overflow: hidden; display: flex; flex-direction: column;
+      transition: transform .2s, border-color .2s, box-shadow .2s; }
+    .card:hover { transform: translateY(-4px); border-color: #4a3b78; box-shadow: 0 18px 40px rgba(0,0,0,.35); }
+    .thumb { aspect-ratio: 16 / 10; display: block; overflow: hidden; position: relative; background: #000; }
+    .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .4s; }
+    .card:hover .thumb img { transform: scale(1.04); }
+    .thumb.art { display: grid; place-items: center; background:
+      radial-gradient(circle at 30% 30%, #6b3d1f 0%, transparent 55%), linear-gradient(135deg, #2a1608, #4a2a12 60%, #1c0f06); }
+    .thumb.art .frame { width: 54%; aspect-ratio: 4/3; border: 10px solid #c9a24a; outline: 3px solid #7a5a1f; border-radius: 4px;
+      background: linear-gradient(160deg, #3c5a7a, #8aa6a0 45%, #d9c48a); box-shadow: 0 10px 30px rgba(0,0,0,.6); display: grid; place-items: center; font-size: 42px; }
+    .thumb .badge { position: absolute; top: 12px; left: 12px; font: 600 12px Inter, sans-serif; padding: 4px 10px; border-radius: 999px; background: rgba(13,8,24,.75); backdrop-filter: blur(4px); }
+    .body { padding: 18px 20px 20px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+    .body h3 { font-size: 23px; }
+    .body p { margin: 0; color: #cfc7e0; font-size: 15px; }
+    .tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 2px; }
+    .tag { font-size: 12px; color: var(--muted); border: 1px solid var(--line); padding: 2px 9px; border-radius: 999px; }
+    .links { display: flex; gap: 8px; margin-top: auto; padding-top: 8px; }
+    .links a { flex: 1; text-align: center; text-decoration: none; font-weight: 600; font-size: 14px; padding: 9px 10px; border-radius: 12px; border: 1px solid var(--line); transition: border-color .2s, background .2s; }
+    .links a:hover { border-color: var(--cyan); }
+    .links a.play { background: rgba(255,79,163,.15); border-color: rgba(255,79,163,.5); }
+    .links a.play:hover { background: rgba(255,79,163,.3); }
+
+    .list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .mini { display: flex; gap: 14px; align-items: flex-start; text-decoration: none; padding: 16px; border-radius: 16px; background: var(--bg2); border: 1px solid var(--line); transition: border-color .2s, transform .2s; }
+    .mini:hover { border-color: var(--violet); transform: translateY(-2px); }
+    .mini .ic { font-size: 26px; width: 44px; height: 44px; flex: none; display: grid; place-items: center; border-radius: 12px; background: #241a3d; }
+    .mini h3 { font-size: 18px; } .mini p { margin: 4px 0 0; font-size: 14px; color: var(--muted); }
+
+    footer { border-top: 1px solid var(--line); padding: 30px 0 40px; color: var(--muted); font-size: 14px; }
+    footer .wrap { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+
+    .js .reveal { opacity: 0; transform: translateY(18px); transition: opacity .6s, transform .6s; }
+    .js .reveal.in { opacity: 1; transform: none; }
+    @media (prefers-reduced-motion: reduce) { .js .reveal { opacity: 1; transform: none; transition: none; } html { scroll-behavior: auto; } }
+
+    @media (max-width: 900px) {
+      .hero .wrap { grid-template-columns: 1fr; text-align: center; padding-top: 30px; }
+      .hero p.lead { margin-left: auto; margin-right: auto; } .cta { justify-content: center; }
+      .stage { max-width: 340px; order: -1; }
+      .grid, .list { grid-template-columns: 1fr; }
+    }
+    @media (min-width: 601px) and (max-width: 900px) { .grid { grid-template-columns: 1fr 1fr; } .list { grid-template-columns: 1fr 1fr; } }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="wrap">
+      <div>
+        <span class="eyebrow"><span class="dot"></span> Hi, I'm KiteRandel</span>
+        <h1>KiteRandel</h1>
+        <p class="lead">I make 3D characters, games and fun little things for the web.</p>
+        <div class="cta">
+          <a class="btn primary" href="#projects">See my projects ↓</a>
+          <a class="btn" href="https://github.com/KiteRandel" target="_blank" rel="noopener">GitHub ↗</a>
+        </div>
+      </div>
+      <div class="stage" id="stage">
+        <div class="glow"></div>
+        <canvas id="kite" aria-label="Kite, KiteRandel's 3D character, dancing"></canvas>
+        <div class="fallback">🪁</div>
+        <div class="hint">this is Kite · drag to spin, click to boop</div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section id="projects">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <div><h2>Projects</h2><p>Things you can open and play with right now.</p></div>
+        </div>
+        <div class="grid">
+          <article class="card reveal">
+            <a class="thumb" href="https://kiterandel.github.io/kite-dance-party/"><img src="img/dance-party.jpg" alt="Kite and backup dancers on a light-up disco floor" loading="lazy" /><span class="badge">🕺 3D · three.js</span></a>
+            <div class="body">
+              <h3>Kite Dance Party</h3>
+              <p>My character Kite, rigged and animated in Blender, dancing on a light-up disco floor to a beat made live in your browser. Boop Kite, throw confetti, call in backup dancers.</p>
+              <div class="tags"><span class="tag">Blender</span><span class="tag">three.js</span><span class="tag">Web Audio</span></div>
+              <div class="links"><a class="play" href="https://kiterandel.github.io/kite-dance-party/">▶ Play</a><a href="https://github.com/KiteRandel/kite-dance-party">Code</a></div>
+            </div>
+          </article>
+
+          <article class="card reveal">
+            <a class="thumb" href="https://kiterandel.github.io/kiting-video-editor/"><img src="img/editor.jpg" alt="Kiting Video Editor with timeline and Claude chat panel" loading="lazy" /><span class="badge">🎬 Web app · AI</span></a>
+            <div class="body">
+              <h3>Kiting Video Editor</h3>
+              <p>A video editor that runs entirely in the browser: trim, split, filters, text, export. It has Claude built in, so you can just say what you want changed.</p>
+              <div class="tags"><span class="tag">JavaScript</span><span class="tag">Canvas</span><span class="tag">Claude API</span></div>
+              <div class="links"><a class="play" href="https://kiterandel.github.io/kiting-video-editor/">▶ Open</a><a href="https://github.com/KiteRandel/kiting-video-editor">Code</a></div>
+            </div>
+          </article>
+
+          <article class="card reveal">
+            <a class="thumb art" href="https://kiterandel.github.io/IT380game/"><div class="frame">🖼️</div><span class="badge">🎮 Game</span></a>
+            <div class="body">
+              <h3>Art Depart</h3>
+              <p>A stealth game set in Renaissance Italy. Sneak past the guard, study famous paintings, and answer art quizzes to unlock the next gallery.</p>
+              <div class="tags"><span class="tag">three.js</span><span class="tag">3D models</span><span class="tag">Educational</span></div>
+              <div class="links"><a class="play" href="https://kiterandel.github.io/IT380game/">▶ Play</a><a href="https://github.com/KiteRandel/IT380game">Code</a></div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="more" style="padding-top: 10px;">
+      <div class="wrap">
+        <div class="section-head reveal"><div><h2>More on GitHub</h2><p>Tools, coursework and experiments.</p></div></div>
+        <div class="list">
+          <a class="mini reveal" href="https://github.com/KiteRandel/Discord-Reposter" target="_blank" rel="noopener">
+            <span class="ic">🤖</span><div><h3>Discord Reposter</h3><p>A Python bot that copies a channel's message history into another channel.</p></div>
+          </a>
+          <a class="mini reveal" href="https://github.com/KiteRandel/bpj3-IT114-005" target="_blank" rel="noopener">
+            <span class="ic">☕</span><div><h3>IT114 Projects</h3><p>Java coursework, including a client–server project.</p></div>
+          </a>
+          <a class="mini reveal" href="https://github.com/KiteRandel/Game-Mod-Q4" target="_blank" rel="noopener">
+            <span class="ic">🕹️</span><div><h3>Game-Mod-Q4</h3><p>A game modding project (fork).</p></div>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <span>© <span id="year">2026</span> KiteRandel · made with 🪁</span>
+      <a href="https://github.com/KiteRandel" target="_blank" rel="noopener">github.com/KiteRandel</a>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach((el, i) => { el.style.transitionDelay = `${(i % 3) * 80}ms`; io.observe(el); });
+  </script>
+
+  <script type="importmap">
+    { "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+    } }
+  </script>
+  <script type="module">
+    // Kite in the hero — the same model as Kite Dance Party, loaded from that site.
+    import * as THREE from 'three';
+    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+    const stage = document.getElementById('stage');
+    const canvas = document.getElementById('kite');
+    const fail = () => stage.classList.add('failed');
+    try {
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+      renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 50);
+      camera.position.set(0, 1.05, 4.4);
+      const controls = new OrbitControls(camera, canvas);
+      controls.target.set(0, 0.85, 0);
+      controls.enableZoom = false; controls.enablePan = false; controls.enableDamping = true;
+      controls.minPolarAngle = Math.PI * 0.3; controls.maxPolarAngle = Math.PI * 0.55;
+      controls.autoRotate = !matchMedia('(prefers-reduced-motion: reduce)').matches; controls.autoRotateSpeed = 1.2;
+
+      scene.add(new THREE.HemisphereLight(0xc8b8ff, 0x2a1030, 1.4));
+      const key = new THREE.DirectionalLight(0xffffff, 2.2); key.position.set(2, 3, 3); scene.add(key);
+      const rimP = new THREE.DirectionalLight(0xff4fa3, 2.5); rimP.position.set(-3, 2, -2); scene.add(rimP);
+      const rimC = new THREE.DirectionalLight(0x3ff2ff, 2); rimC.position.set(3, 1, -3); scene.add(rimC);
+
+      const disc = new THREE.Mesh(new THREE.CircleGeometry(0.75, 48), new THREE.MeshBasicMaterial({ color: 0xff4fa3, transparent: true, opacity: 0.18 }));
+      disc.rotation.x = -Math.PI / 2; scene.add(disc);
+
+      let mixer = null; let holder = null; let squash = 0;
+      new GLTFLoader().load('https://kiterandel.github.io/kite-dance-party/assets/kite.glb', (gltf) => {
+        const kite = gltf.scene;
+        const box = new THREE.Box3().setFromObject(kite);
+        kite.scale.setScalar(1.7 / (box.max.y - box.min.y));
+        const b2 = new THREE.Box3().setFromObject(kite); const c = b2.getCenter(new THREE.Vector3());
+        kite.position.set(-c.x, -b2.min.y, -c.z);
+        holder = new THREE.Group(); holder.add(kite); scene.add(holder);
+        if (gltf.animations[0]) { mixer = new THREE.AnimationMixer(kite); mixer.clipAction(gltf.animations[0]).play(); }
+      }, undefined, fail);
+
+      const ray = new THREE.Raycaster(); let down = null;
+      canvas.addEventListener('pointerdown', (e) => { down = [e.clientX, e.clientY]; });
+      canvas.addEventListener('pointerup', (e) => {
+        if (!holder || !down || Math.hypot(e.clientX - down[0], e.clientY - down[1]) > 5) return;
+        const r = canvas.getBoundingClientRect();
+        ray.setFromCamera(new THREE.Vector2(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1), camera);
+        if (ray.intersectObject(holder, true).length) squash = 1;
+      });
+
+      const resize = () => { const w = canvas.clientWidth, h = canvas.clientHeight; if (canvas.width !== w * renderer.getPixelRatio() || canvas.height !== h * renderer.getPixelRatio()) { renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix(); } };
+      const clock = new THREE.Clock();
+      renderer.setAnimationLoop(() => {
+        const dt = Math.min(clock.getDelta(), 0.05);
+        resize();
+        if (mixer) mixer.update(dt);
+        if (holder) {
+          squash = Math.max(0, squash - dt * 2.2);
+          const w = Math.sin(squash * Math.PI * 4) * squash;
+          holder.scale.set(1 + w * 0.18, 1 - w * 0.22, 1 + w * 0.18);
+        }
+        disc.material.opacity = 0.14 + Math.sin(clock.elapsedTime * 4) * 0.06;
+        controls.update();
+        renderer.render(scene, camera);
+      });
+      window.__heroReady = () => !!holder;
+    } catch (e) { fail(); }
+  </script>
+</body>
+</html>
