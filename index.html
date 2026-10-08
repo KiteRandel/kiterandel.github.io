@@ -72,6 +72,13 @@
     .links a.play { background: rgba(255,79,163,.15); border-color: rgba(255,79,163,.5); }
     .links a.play:hover { background: rgba(255,79,163,.3); }
 
+    .card.feature { grid-column: 1 / -1; flex-direction: row; }
+    .card.feature .thumb { width: 58%; flex: none; aspect-ratio: 16 / 10; }
+    .card.feature .body { padding: 26px 28px; justify-content: center; }
+    .card.feature .body h3 { font-size: 32px; }
+    .card.feature .body p { font-size: 16px; }
+    .new { display: inline-block; font: 600 12px Inter, sans-serif; background: var(--yellow); color: #2a1a00; padding: 2px 8px; border-radius: 999px; vertical-align: middle; margin-left: 6px; }
+    @media (max-width: 900px) { .card.feature { flex-direction: column; } .card.feature .thumb { width: 100%; } }
     .list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
     .mini { display: flex; gap: 14px; align-items: flex-start; text-decoration: none; padding: 16px; border-radius: 16px; background: var(--bg2); border: 1px solid var(--line); transition: border-color .2s, transform .2s; }
     .mini:hover { border-color: var(--violet); transform: translateY(-2px); }
@@ -122,6 +129,15 @@
           <div><h2>Projects</h2><p>Things you can open and play with right now.</p></div>
         </div>
         <div class="grid">
+          <article class="card feature reveal">
+            <a class="thumb" href="https://kiterandel.github.io/amara-cafe/"><img src="img/amara-cafe.jpg" alt="Amara's Café: an isometric café full of beastfolk customers" loading="lazy" /><span class="badge">🎮 Game · three.js</span></a>
+            <div class="body">
+              <h3>Amara's Café <span class="new">NEW</span></h3>
+              <p>A cozy isometric café game starring Amara. Brew coffee, bake treats, serve humans and beastfolk before their patience runs out, then decorate to attract cat, bunny, fox and bear guests.</p>
+              <div class="tags"><span class="tag">Blender</span><span class="tag">three.js</span><span class="tag">Game design</span></div>
+              <div class="links"><a class="play" href="https://kiterandel.github.io/amara-cafe/">▶ Play</a><a href="https://github.com/KiteRandel/amara-cafe">Code</a></div>
+            </div>
+          </article>
           <article class="card reveal">
             <a class="thumb" href="https://kiterandel.github.io/kite-dance-party/"><img src="img/dance-party.jpg" alt="Kite and backup dancers on a light-up disco floor" loading="lazy" /><span class="badge">🕺 3D · three.js</span></a>
             <div class="body">
